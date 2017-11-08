@@ -50,30 +50,37 @@
     if (!self.shadeView) {
         self.shadeView = [[UIView alloc]initWithFrame:self.bounds];
         self.shadeView.backgroundColor = [[UIColor lightGrayColor]colorWithAlphaComponent:0.6];
-        [self.shadeView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)]];
         [self addSubview:self.shadeView];
     }
     
     
     
     if ([self.tipMessage isEqualToString:@""]) {
-      
+        
         self.tipLabHeight = 0;
     }else{
         self.tipLabHeight = 45;
     }
     
+    CGFloat bottomVH;
+    if (self.bounds.size.height == 812) {
+        bottomVH = 34;
+    }else{
+        bottomVH = 0;
+    }
+    
+    
     if (!self.popBaseView) {
-        self.popBaseView = [[UIView alloc]initWithFrame:CGRectMake(0, self.bounds.size.height, self.bounds.size.width, (self.data.count + 1)*45 + (self.data.count - 1)*0.5 + 5 + self.tipLabHeight)];
+        self.popBaseView = [[UIView alloc]initWithFrame:CGRectMake(0, self.bounds.size.height, self.bounds.size.width, (self.data.count + 1)*45 + (self.data.count - 1)*0.5 + 5 + self.tipLabHeight + bottomVH)];
         self.popBaseView.backgroundColor = [UIColor lightTextColor];
         [self.shadeView addSubview:self.popBaseView];
         
         [UIView animateWithDuration:0.3 animations:^{
-           self.popBaseView.frame = CGRectMake(0, self.bounds.size.height - ((self.data.count + 1)*45 + (self.data.count - 1)*0.5 + 5 + self.tipLabHeight), self.bounds.size.width, (self.data.count + 1)*45 + self.tipLabHeight + (self.data.count - 1)*0.5 + 5);
+            self.popBaseView.frame = CGRectMake(0, self.bounds.size.height - ((self.data.count + 1)*45 + (self.data.count - 1)*0.5 + 5 + self.tipLabHeight) - bottomVH, self.bounds.size.width, (self.data.count + 1)*45 + self.tipLabHeight + (self.data.count - 1)*0.5 + 5 + bottomVH);
         }];
     }
     
-        
+    
     UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.popBaseView.bounds.size.width, self.tipLabHeight - 0.5)];
     lable.text = self.tipMessage;
     lable.backgroundColor = [UIColor whiteColor];
@@ -107,6 +114,8 @@
         }
     }
     
+    
+    
     if (!self.cancleButton) {
         self.cancleButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.cancleButton.frame = CGRectMake(0, self.tipLabHeight + 45*self.data.count + (self.data.count - 1) + 5, self.popBaseView.bounds.size.width, 45);
@@ -117,6 +126,11 @@
         [self.popBaseView addSubview:self.cancleButton];
         
     }
+    
+    UIView *bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.tipLabHeight + 45*self.data.count + (self.data.count - 1) + 50, self.popBaseView.bounds.size.width, bottomVH)];
+    bottomView.backgroundColor = [UIColor whiteColor];
+    [self.popBaseView addSubview:bottomView];
+    
 }
 
 -(void)showPopView{
@@ -125,17 +139,6 @@
     }
 }
 
-#pragma mark -tap
-
--(void)handleTapGesture:(UITapGestureRecognizer*)tap{
-    [UIView animateWithDuration:0.3 animations:^{
-        self.popBaseView.frame = CGRectMake(0, self.bounds.size.height, self.bounds.size.width, (self.data.count + 1)*45 + (self.data.count - 1)*0.5 + 5 + self.tipLabHeight);
-
-    } completion:^(BOOL finished) {
-        self.shadeView.alpha = 0;
-        [self removeFromSuperview];
-    }];
-}
 
 #pragma mark -click
 
@@ -154,7 +157,7 @@
 }
 
 -(void)actionClick:(UIButton*)button{
-  
+    
     if (self.onDoneBlock) {
         
         self.onDoneBlock(button.tag);
@@ -171,3 +174,4 @@
 }
 
 @end
+
